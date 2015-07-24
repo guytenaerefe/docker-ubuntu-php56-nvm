@@ -19,14 +19,26 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install mysql-client a
 # Getcomposer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
-# Adding user 
-RUN adduser --disabled-password --gecos '' dockworker && adduser dockworker sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN mkdir -p /home/dockworker && chown -R dockworker:dockworker /home/dockworker
+# add user dockworker and use it to install node/npm and run the app
+RUN useradd --home /home/dockworker -m -U -s /bin/bash dockworker
+
+#allow some limited sudo commands for user `node`
+RUN echo 'Defaults !requiretty' >> /etc/sudoers; \
+    echo 'dockworker ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
+
+    #run all of the following commands as user node from now on
 USER dockworker
 
-RUN touch ~/.bash_profile
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash
+
+#change it to your required node version
+ENV NODE_VERSION 0.12.7
+
+#needed by nvm install
 ENV NVM_DIR /home/dockworker/.nvm
-RUN . ~/.nvm/nvm.sh && nvm install stable && nvm use stable
-# Make it accessible, otherwise you will get node/npm not found errors.
-RUN echo 'export PATH=$PATH:$HOME/.nvm/versions/node/v0.12.7/bin/' >> $HOME/.bashrc
+
+#install the specified node version and set it as the default one, install the global npm packages
+RUN . ~/.nvm/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && npm install -g bower forever --user "dockworker" && npm install -g gulp forever --user "dockworker"
+
+RUN echo 'export PATH=$PATH:/home/dockworker/.nvm/versions/node/$NODE_VERSION/bin' >> /home/dockworker/.bashrc
+
