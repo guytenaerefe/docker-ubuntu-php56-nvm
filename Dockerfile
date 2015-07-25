@@ -19,16 +19,17 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install mysql-client a
 # Getcomposer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
-RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash
-
 #change it to your required node version
 ENV NODE_VERSION 0.12.7
 
 #needed by nvm install
-ENV NVM_DIR /usr/local/nvm/.nvm 
+ENV NVM_DIR /usr/local/nvm
+
+# NVM
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | NVM_DIR=/usr/local/nvm bash
 
 #install the specified node version and set it as the default one, install the global npm packages
-RUN . ~/.nvm/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && npm install -g bower && npm install -g gulp
-RUN mkdir -p /home/root
-RUN echo 'export PATH=$PATH:/usr/local/nvm/.nvm/versions/node/$NODE_VERSION/bin' >> /home/root/.bashrc
+RUN . /usr/local/nvm/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && npm install -g bower && npm install -g gulp
+
+#RUN echo 'export PATH=$PATH:$NVM_DIR/.nvm/versions/node/$NODE_VERSION/bin' >> /home/dockworker/.bashrc
 
