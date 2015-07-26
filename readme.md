@@ -1,6 +1,5 @@
 # README #
 
-DISCLAIMER: this is the result of hours of fiddling, this recap might not be enough to get it to work for you. These steps have all been done on Ubuntu 15.04. 
 This is a standalone container for automated Wercker builds that need PHP 5.6, composer and NVM. This version does not include docker-compose.
 
 ## Prerequisites ###
@@ -14,6 +13,7 @@ This is a standalone container for automated Wercker builds that need PHP 5.6, c
 ### How do I get set up? ###
 
 If you hadn't already:
+
 * Install docker (preferably not as root)
 * Download this repo
 * In case you use this for local development (would use another box.), set a USER in the Dockerfile so your local filesystem does not accidently get files created by user `root`.
