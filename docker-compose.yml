@@ -1,0 +1,18 @@
+web:
+  build: .
+  command: sudo /usr/sbin/apache2ctl -D FOREGROUND
+  links:
+   - db
+  ports:
+   - "8008:80"
+   - "4434:443"
+  volumes:
+   - /var/www:/var/www/
+   - /etc/apache2/sites-enabled/:/etc/apache2/sites-enabled/
+   - /etc/apache2/sites-available/:/etc/apache2/sites-available/
+db:
+  image: mysql
+  environment:
+   MYSQL_ROOT_PASSWORD: toor  
+  ports:
+  - "33066:3306"
